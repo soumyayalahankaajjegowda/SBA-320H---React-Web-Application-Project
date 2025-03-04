@@ -17,15 +17,20 @@ A React-based web application to search and favorite movies using The Movie Data
 - **React**: For building the UI with components and hooks.
 - **React Router**: For navigation between Home and Favorites pages.
 - **Context API**: For managing the favorites state.
-- **TMDb API**: External data source for movie information.
+
+- **TMDb API**: const API_KEY = "c09720d50160ea7d43ecc2ab28e96f05";
+const BASE_URL = "https://api.themoviedb.org/3";
+ External data source for movie information.
+
 - **CSS**: For styling components.
+
 - **localStorage**: For persisting favorites across sessions.
 
 ## Approach
 The app fetches popular movies on load using the TMDb API and displays them in a grid. Users can search for movies by title, add them to a favorites list (stored in localStorage), and view favorites on a separate page. Pagination is implemented to browse multiple pages of results, with a loading spinner and no-results message enhancing the UX.
 
 ## Live Site
-[Insert your Heroku/Netlify URL here]
+[]
 
 ## Usage
 1. On the Home page, view popular movies or search for a specific title.
@@ -33,14 +38,8 @@ The app fetches popular movies on load using the TMDb API and displays them in a
 3. Use the "Previous" and "Next" buttons to navigate pages of movies.
 4. Visit the Favorites page to see your saved movies.
 
-## Unsolved Problems
-- No handling for API rate limits or downtime.
-- Pagination resets to page 1 after a new search (could persist the page).
 
-## Setup
-1. Clone the repo: `git clone <your-repo-url>`
-2. Install dependencies: `npm install`
-3. Run locally: `npm start`
+
 
 Approach Taken
 Planning:
