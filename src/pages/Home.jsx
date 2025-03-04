@@ -8,14 +8,21 @@ function Home() {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [page, setpage] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
+
+//load popular movies on initial render
   useEffect(() => {
     const loadPopularMovies = async () => {
       try {
-            const popularMovies = await getPopularMovies();
-            setMovies(popularMovies);
+            const popularMovies = await getPopularMovies( page);
+            setMovies(popularMovies.results);
+            setTotalPages(popularMovies.total_pages);
+        setError(null);
       } catch (err) {
-        console.log(err);
+        console.log("Error fetching popular movies:", err);
         setError("Failed to load movies...");
       }
       finally {
@@ -24,7 +31,7 @@ function Home() {
       }; 
       loadPopularMovies();
     
-  }, []);
+  }, [page]);
 
   //  const movies = getPopularMovies()
   // [
@@ -35,26 +42,34 @@ function Home() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim() || loading) return;   //prevent empty or duplicate searches
+
     if (loading) return
-    setLoading(true)
+    setLoading(true);
+    setHasSearched(true);
     try {
-      const searchResults = await searchMovies(searchQuery)
-      setMovies(searchResults)
+      const searchResults = await searchMovies(searchQuery, page);
+      setMovies(searchResults. results);
+      setTotalPages(searchResults.total_pages);
       setError(null)
     } catch (err) {
-        console.log(err)
-        setError("Failed to search movies...")
+        console.log("Error searching movies:", err);
+        setError("Failed to search movies...");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
     // alert(searchQuery);
     // setSearchQuery("");
   };
 
+  //pagination Handler
+  const goToPreviousPage = () => setPage((prev) => Math.max(prev - 1, 1));
+  const goToNextPage = () => setPage((prev) => Math.min(prev + 1, totalPages));
+ 
   return (
 
     <div className="home">
+      {/* Search form*/}
       <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
@@ -68,12 +83,17 @@ function Home() {
         </button>
       </form>
 
+
+          {/* Error message */}
        {error && <div className="error-message">{error}</div>}
 
+        {/* Loading spinner */}
       {loading ?(
-        <div className="loading">Loading...</div>
+        <div className="spinner">Loading...</div>
     ):(
-       <div className="movies-grid">  
+      <div>
+      {movies.length > 0 ? (
+           <div className="movies-grid">  
        {movies.map(
         (movie) => 
          // movie.title.toLowerCase().startsWith(searchQuery) &&
@@ -81,9 +101,39 @@ function Home() {
           )
        )} 
     </div>
+    ) : (
+      hasSearched && (
+        <div className="no-results">
+          No movies found for "{searchQuery}"
+          </div>
+      )
     )}
+    {movies.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={goToPreviousPage}
+                disabled={page === 1}
+                className="pagination-button"
+              >
+                Previous
+              </button>
+              <span>
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={goToNextPage}
+                disabled={page === totalPages}
+                className="pagination-button"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 export default Home;
+   
