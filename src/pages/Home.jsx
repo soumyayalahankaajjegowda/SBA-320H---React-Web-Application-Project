@@ -1,6 +1,6 @@
 import MovieCard from "../components/MovieCard";
 import { useState, useEffect } from "react";
-import {searchMovies, getPopularMovies } from "../services/api";
+import { searchMovies, getPopularMovies } from "../services/api";
 import "../css/Home.css";
 
 function Home() {
@@ -9,28 +9,27 @@ function Home() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasSearched, setHasSearched] = useState(false);
-  const [page, setpage] = useState(false);
+  const [page, setpage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-
-//load popular movies on initial render
+  //load popular movies on initial render
   useEffect(() => {
     const loadPopularMovies = async () => {
+       setLoading(true);
       try {
-            const popularMovies = await getPopularMovies( page);
-            setMovies(popularMovies.results);
-            setTotalPages(popularMovies.total_pages);
+        const popularMovies = await getPopularMovies(page);
+        console.log(popularMovies)
+        setMovies(popularMovies.results);
+        setTotalPages(popularMovies.total_pages);
         setError(null);
       } catch (err) {
         console.log("Error fetching popular movies:", err);
         setError("Failed to load movies...");
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
-      }; 
-      loadPopularMovies();
-    
+    };
+    loadPopularMovies();
   }, [page]);
 
   //  const movies = getPopularMovies()
@@ -42,19 +41,20 @@ function Home() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!searchQuery.trim() || loading) return;   //prevent empty or duplicate searches
+    if (!searchQuery.trim() || loading) return; //prevent empty or duplicate searches
 
-    if (loading) return
+    if (loading) return;
     setLoading(true);
     setHasSearched(true);
     try {
-      const searchResults = await searchMovies(searchQuery, page);
-      setMovies(searchResults. results);
+      const searchResults = await searchMovies( page);
+      console.log("s",searchResults)
+      setMovies(searchResults.results);
       setTotalPages(searchResults.total_pages);
-      setError(null)
+      setError(null);
     } catch (err) {
-        console.log("Error searching movies:", err);
-        setError("Failed to search movies...");
+      console.log("Error searching movies:", err);
+      setError("Failed to search movies...");
     } finally {
       setLoading(false);
     }
@@ -65,9 +65,8 @@ function Home() {
   //pagination Handler
   const goToPreviousPage = () => setPage((prev) => Math.max(prev - 1, 1));
   const goToNextPage = () => setPage((prev) => Math.min(prev + 1, totalPages));
- 
-  return (
 
+  return (
     <div className="home">
       {/* Search form*/}
       <form onSubmit={handleSearch} className="search-form">
@@ -83,32 +82,29 @@ function Home() {
         </button>
       </form>
 
+      {/* Error message */}
+      {error && <div className="error-message">{error}</div>}
 
-          {/* Error message */}
-       {error && <div className="error-message">{error}</div>}
-
-        {/* Loading spinner */}
-      {loading ?(
+      {/* Loading spinner */}
+      {loading ? (
         <div className="spinner">Loading...</div>
-    ):(
-      <div>
-      {movies.length > 0 ? (
-           <div className="movies-grid">  
-       {movies.map(
-        (movie) => 
-         // movie.title.toLowerCase().startsWith(searchQuery) &&
-           ( <MovieCard movie={movie} key={movie.id} />
-          )
-       )} 
-    </div>
-    ) : (
-      hasSearched && (
-        <div className="no-results">
-          No movies found for "{searchQuery}"
-          </div>
-      )
-    )}
-    {movies.length > 0 && (
+      ) : (
+        <div>
+          {movies?.length > 0 ? (
+            <div className="movies-grid">
+              {movies.map((movie) => (
+                // movie.title.toLowerCase().startsWith(searchQuery) &&
+                <MovieCard movie={movie} key={movie.id} />
+              ))}
+            </div>
+          ) : (
+            hasSearched && (
+              <div className="no-results">
+                No movies found for "{searchQuery}"
+              </div>
+            )
+          )}
+          {movies?.length > 0 && (
             <div className="pagination">
               <button
                 onClick={goToPreviousPage}
@@ -136,4 +132,3 @@ function Home() {
 }
 
 export default Home;
-   
