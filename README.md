@@ -30,7 +30,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 The app fetches popular movies on load using the TMDb API and displays them in a grid. Users can search for movies by title, add them to a favorites list (stored in localStorage), and view favorites on a separate page. Pagination is implemented to browse multiple pages of results, with a loading spinner and no-results message enhancing the UX.
 
 ## Live Site
-[]
+[https://helpful-dieffenbachia-b1a4eb.netlify.app/]
 
 ## Usage
 1. On the Home page, view popular movies or search for a specific title.
@@ -55,3 +55,9 @@ State Management: Managed UI state using React's built-in hooks like useState an
 Deployment:
 
 Hosted the project on Netlify for live access.
+
+Vite+react 
+
+# Output
+
+![alt text](image.png)
